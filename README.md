@@ -33,5 +33,3 @@ To get your server up and running, follow these steps:
    - You should now be able to access your server on the specified port (default: `8080`).
 
 ---
-
-This format is clean, easy to follow, and fits well for a typical project README file. Let me know if you need further adjustments!

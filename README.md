@@ -1,7 +1,3 @@
-Here’s how you can make the steps more suitable for a README:
-
----
-
 ## Setup Instructions
 
 To get your server up and running, follow these steps:

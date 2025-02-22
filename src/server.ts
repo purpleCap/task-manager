@@ -1,5 +1,5 @@
 import express, {Request, Response, NextFunction} from 'express';
-import { PORT, DB_CONNECTION_URL } from './secrets';
+import { PORT, DB_CONNECTION_STRING } from './secrets';
 import mongoose from 'mongoose';
 import rootRouter from './routes/index.route';
 import { ICustomError } from './model/error';
@@ -23,7 +23,7 @@ server.use((error: ICustomError, req: Request, res: Response, next: NextFunction
     res.status(statusCode).json({ status: false, statusCode: statusCode, message: message, data: data });
 })
 
-mongoose.connect(DB_CONNECTION_URL)
+mongoose.connect(DB_CONNECTION_STRING)
 .then(async (_)=> {
 //   const hasUser  = await User.findOne();
 //   if(!hasUser) {

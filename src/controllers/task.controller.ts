@@ -38,6 +38,7 @@ const createTask = async (req: any, res: Response, next: NextFunction) => {
         }
         await user.save();
         res.status(201).json({
+          status: true,
           message: "Task created successfully",
           task: result,
         });

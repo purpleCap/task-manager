@@ -1,27 +1,36 @@
 import express, {Request, Response, NextFunction} from 'express';
+import cors from 'cors';
 import { PORT, DB_CONNECTION_STRING } from './secrets';
 import mongoose from 'mongoose';
 import rootRouter from './routes/index.route';
 import { ICustomError } from './model/error';
 
 const server = express();
+
+const corsOptions = {
+  origin: 'http://10.0.2.2:8081',
+  methods: 'GET,POST,PUT,DELETE', 
+  allowedHeaders: 'Content-Type,Authorization',
+};
+server.use(cors(corsOptions));
+
 server.use(express.json());
 
-server.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next()
-});
+// server.use((req, res, next) => {
+//     res.setHeader('Access-Control-Allow-Origin', '*');
+//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
+//     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+//     next()
+// });
 
 server.use('/api', rootRouter);
 
 server.use((error: ICustomError, req: Request, res: Response, next: NextFunction) => {
     const statusCode = error.statusCode || 500;
-    const message = error?.error?.message;
+    const message = error?.error?.message || 'Internal Server Error';
     const data = error.data || null;
     res.status(statusCode).json({ status: false, statusCode: statusCode, message: message, data: data });
-})
+});
 
 mongoose.connect(DB_CONNECTION_STRING)
 .then(async (_)=> {
@@ -37,4 +46,4 @@ mongoose.connect(DB_CONNECTION_STRING)
 })
 .catch(err => {
   console.log(err);
-})
+});

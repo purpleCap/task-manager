@@ -19,7 +19,7 @@ server.use('/api', rootRouter);
 server.use((error: ICustomError, req: Request, res: Response, next: NextFunction) => {
     const statusCode = error.statusCode || 500;
     const message = error?.error?.message;
-    const data = error.data || [];
+    const data = error.data || null;
     res.status(statusCode).json({ status: false, statusCode: statusCode, message: message, data: data });
 })
 

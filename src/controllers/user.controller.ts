@@ -9,12 +9,20 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const errors = validationResult(req);
         if(!errors.isEmpty()) {
-            const error = new Error('Validation failed, entered data is incorrect');
+            const error = new Error('Validation failed');
             const cerror = new CustomError({statusCode: 422, error, data: errors});
             throw cerror;
-          }
+        }
 
         const { email, name, password }  = req.body;
+        // const hasUser = await User.findOne({email: email});
+        // console.log(hasUser)
+        // if(hasUser) {
+        //     const error = new Error('Account already exists with this email');
+        //     const cerror = new CustomError({statusCode: 409, error, data: null});
+        //     throw cerror;
+        // }
+
         const encrypted_pass = await bcrypt.hash(password, 12);
         const user = new User({email, password: encrypted_pass, name});
         const result = await user.save();
@@ -33,11 +41,10 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 const getUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const {email, password} = req.body;
-        console.log(email, password)
         const fetchedUser = await User.findOne({email: email});
         if(!fetchedUser) {
             const error = new Error("No user found with this email");
-            const cerror = new CustomError({statusCode: 404, error, data: []});
+            const cerror = new CustomError({statusCode: 404, error, data: null});
             throw cerror;
         }
         const isAuthenticated = await bcrypt.compare(password, fetchedUser.password);
@@ -56,7 +63,7 @@ const getUsers = async (req: Request, res: Response, next: NextFunction) => {
             })
         } else {
             const error = new Error("Wrong credentials!");
-             const cerror = new CustomError({statusCode: 401, error, data: []});
+             const cerror = new CustomError({statusCode: 401, error, data: null});
             throw cerror;
         }
     } catch (err) {

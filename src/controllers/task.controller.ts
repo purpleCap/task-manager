@@ -9,7 +9,7 @@ const createTask = async (req: any, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if(!errors.isEmpty()) {
           const error = new Error('Validation failed, entered data is incorrect');
-          const cerror = new CustomError({statusCode: 422, error, data: []});
+          const cerror = new CustomError({statusCode: 422, error, data: errors});
           throw cerror;
           // return res.status(422).json({message: 'Validation failed, entered data is incorrect', errors: errors.array()})
         }
@@ -18,7 +18,7 @@ const createTask = async (req: any, res: Response, next: NextFunction) => {
         const user = await User.findById(req.userId);
         if(!user) {
           const error = new Error("No user found");
-          const cerror = new CustomError({statusCode: 404, error, data: []});
+          const cerror = new CustomError({statusCode: 404, error, data: null});
           throw cerror;
         }
         const { title, description } = req.body;
@@ -42,7 +42,6 @@ const createTask = async (req: any, res: Response, next: NextFunction) => {
           task: result,
         });
         } catch (err) {
-            console.log(err)
             next(err);
         }
 }
@@ -53,7 +52,7 @@ const getTask = async (req: any, res: Response, next: NextFunction) => {
         .sort({createdAt: -1});
         if(!user) {
           const error = new Error("No user found");
-          const cerror = new CustomError({statusCode: 404, error, data: []});
+          const cerror = new CustomError({statusCode: 404, error, data: null});
           throw cerror;
         }
         res.status(201).json({
@@ -72,14 +71,14 @@ const getTaskById = async (req: any, res: Response, next: NextFunction) => {
         .sort({createdAt: -1});
         if(!user) {
           const error = new Error("No user found");
-          const cerror = new CustomError({statusCode: 404, error, data: []});
+          const cerror = new CustomError({statusCode: 404, error, data: null});
           throw cerror;
         }
         const {id} = req.params;
         const findIndexOf = user.tasks.findIndex(t => String(t._id) === id);
         if(findIndexOf === -1) {
           const error = new Error("You are not authorized to access this task");
-          const cerror = new CustomError({statusCode: 403, error, data: []});
+          const cerror = new CustomError({statusCode: 403, error, data: null});
           throw cerror;
         }
         const task = await Task.findById(id);
@@ -95,10 +94,16 @@ const getTaskById = async (req: any, res: Response, next: NextFunction) => {
 
 const editTask = async (req: any, res: Response, next: NextFunction) => {
     try {
+        const errors = validationResult(req);
+        if(!errors.isEmpty()) {
+          const error = new Error('Validation failed, entered data is incorrect');
+          const cerror = new CustomError({statusCode: 422, error, data: errors});
+          throw cerror;
+        }
         const user = await User.findById(req.userId).populate('tasks', "-creator -__v");
         if(!user) {
           const error = new Error("No user found");
-          const cerror = new CustomError({statusCode: 404, error, data: []});
+          const cerror = new CustomError({statusCode: 404, error, data: null});
           throw cerror;
         }
         const { title, description }  = req.body;
@@ -106,7 +111,7 @@ const editTask = async (req: any, res: Response, next: NextFunction) => {
         const findIndexOf = user.tasks.findIndex(t => String(t._id) === id);
         if(findIndexOf === -1) {
           const error = new Error("You are not authorized to access this task");
-          const cerror = new CustomError({statusCode: 403, error, data: []});
+          const cerror = new CustomError({statusCode: 403, error, data: null});
           throw cerror;
         }
 
@@ -130,14 +135,14 @@ const deleteTask = async (req: any, res: Response, next: NextFunction) => {
         const user = await User.findById(req.userId).populate('tasks', "-creator -__v");
         if(!user) {
           const error = new Error("No user found");
-          const cerror = new CustomError({statusCode: 404, error, data: []});
+          const cerror = new CustomError({statusCode: 404, error, data: null});
           throw cerror;
         }
         const { id }  = req.params;
         const findIndexOf = user.tasks.findIndex(t => String(t._id) === id);
         if(findIndexOf === -1) {
           const error = new Error("You are not authorized to access this task");
-          const cerror = new CustomError({statusCode: 403, error, data: []});
+          const cerror = new CustomError({statusCode: 403, error, data: null});
           throw cerror;
         }
 

@@ -8,7 +8,7 @@ import { ICustomError } from './model/error';
 const server = express();
 
 const corsOptions = {
-  origin: 'http://10.0.2.2:8081',
+  origin: '*',
   methods: 'GET,POST,PUT,DELETE', 
   allowedHeaders: 'Content-Type,Authorization',
 };

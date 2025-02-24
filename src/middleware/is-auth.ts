@@ -11,17 +11,20 @@ export default async (req : any, res : Response, next: NextFunction) => {
             throw cerror;
         }
         token = req.get('Authorization')!.split(' ')[1];
-        const data : any = jwt.verify(token, 'areallylongstringaskey');
+        const data : any = jwt.verify(token, 'areallylongstringaskey');         
         if(!data) {
             const error = new Error("Not authenticated");
             const cerror = new CustomError({statusCode: 401, error, data: []});
             throw cerror;
         }
+
         req.userId = data.userId;
         next()
     } catch(err : any) {
-        if(!err.statusCode)
-            err.statusCode = 500;
+        if(!err.statusCode) {
+            const error = new Error("Try login again");
+            err = new CustomError({statusCode: 403, error, data: []});
+        }
         next(err)
     }
 }

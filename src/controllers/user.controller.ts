@@ -38,7 +38,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-const getUsers = async (req: Request, res: Response, next: NextFunction) => {
+const login = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const {email, password} = req.body;
         const fetchedUser = await User.findOne({email: email});
@@ -54,7 +54,7 @@ const getUsers = async (req: Request, res: Response, next: NextFunction) => {
                 password: password,
                 userId: fetchedUser._id
             }, "areallylongstringaskey", { expiresIn: '1h' });
-            
+
             res.status(200).json({
                 status: true,
                 statusCode: 200,
@@ -71,4 +71,4 @@ const getUsers = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-export default { createUser, getUsers };
+export default { createUser, login };

@@ -47,3 +47,5 @@ mongoose.connect(DB_CONNECTION_STRING)
 .catch(err => {
   console.log(err);
 });
+
+export default server;

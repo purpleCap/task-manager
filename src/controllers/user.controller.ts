@@ -38,6 +38,32 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
+const reset = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const errors = validationResult(req);
+        if(!errors.isEmpty()) {
+            const error = new Error('Validation failed');
+            const cerror = new CustomError({statusCode: 422, error, data: errors});
+            throw cerror;
+        }
+
+        const { email, password }  = req.body;
+
+        const encrypted_pass = await bcrypt.hash(password, 12);
+        const fetchUser = await User.findOne({email});
+        fetchUser!.password = encrypted_pass;
+        await fetchUser?.save();
+
+        res.status(201).json({
+            status: true,
+            statusCode: 200,
+            message: "Your password has been updated",
+        })
+    } catch (err) {
+        next(err);
+    }
+}
+
 const login = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const {email, password} = req.body;
@@ -71,4 +97,4 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-export default { createUser, login };
+export default { createUser, login, reset };

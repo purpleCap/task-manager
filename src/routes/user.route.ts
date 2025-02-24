@@ -24,6 +24,21 @@ router.post('/signup',  [
       .isEmpty()
   ], userController.createUser);
 
+router.post('/reset',  [
+    body("email")
+      .isEmail()
+      .withMessage("Please enter a valid email")
+      .custom(async (value, {req}) => {
+          const fetchedUser = await User.findOne({email: value});
+          if(!fetchedUser) {
+              return Promise.reject("No user found with this email");
+          }
+      })
+      .normalizeEmail(),
+    body("password")
+      .trim().isLength({min: 5})
+  ], userController.reset);
+
   
 router.post('/login', userController.login);
 

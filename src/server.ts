@@ -8,7 +8,7 @@ import { ICustomError } from './model/error';
 const server = express();
 
 const corsOptions = {
-  origin: '*',
+  origin: 'http://10.0.2.2:8081',
   methods: 'GET,POST,PUT,DELETE', 
   allowedHeaders: 'Content-Type,Authorization',
 };
@@ -47,5 +47,3 @@ mongoose.connect(DB_CONNECTION_STRING)
 .catch(err => {
   console.log(err);
 });
-
-export default server;

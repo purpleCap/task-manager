@@ -7,7 +7,7 @@ router.get('/', taskController.getTask);
 
 router.get('/:id', taskController.getTaskById);
 
-router.post('/create', [
+router.post('/', [
     body('title')
       .trim()
       .not()

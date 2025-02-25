@@ -133,19 +133,22 @@ const editTask = async (req: any, res: Response, next: NextFunction) => {
 
 const deleteTask = async (req: any, res: Response, next: NextFunction) => {
     try {
-        const user = await User.findById(req.userId).populate('tasks', "-creator -__v");
+        const user = await User.findById(req.userId);
         if(!user) {
           const error = new Error("No user found");
           const cerror = new CustomError({statusCode: 404, error, data: null});
           throw cerror;
         }
         const { id }  = req.params;
-        const findIndexOf = user.tasks.findIndex(t => String(t._id) === id);
+        const findIndexOf = user.tasks.findIndex(t => String(t) === id);
         if(findIndexOf === -1) {
           const error = new Error("You are not authorized to access this task");
           const cerror = new CustomError({statusCode: 403, error, data: null});
           throw cerror;
         }
+        const otherTasks = user.tasks.filter(t => String(t) !== id);
+        user.tasks = otherTasks;
+        await user.save();
 
         const task = await Task.findById(id)
         await task?.deleteOne();

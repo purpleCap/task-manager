@@ -67,7 +67,7 @@ const reset = async (req: Request, res: Response, next: NextFunction) => {
 const login = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const {email, password} = req.body;
-        const fetchedUser = await User.findOne({email: email});
+        const fetchedUser = await User.findOne({email: email}).select("-tasks").exec();;
         if(!fetchedUser) {
             const error = new Error("No user found with this email");
             const cerror = new CustomError({statusCode: 404, error, data: null});
